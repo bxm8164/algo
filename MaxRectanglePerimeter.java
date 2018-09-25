@@ -9,95 +9,101 @@ public class MaxRectanglePerimeter {
         Scanner scan = new Scanner(System.in);
         int numInputs = scan.nextInt();
 
-        int [] arr = new int[numInputs * 2];
+        Node[] vertex_array = new Node[numInputs];
         String [] shortStrArr = new String[2];
         String [] strArr = new String[numInputs * 2];
 
         scan.nextLine();
-        for(int i = 0; i <= numInputs+2; i+=2){
-            shortStrArr = (scan.nextLine()).split(" ");
-            strArr[i] = shortStrArr[0];
-            strArr[i+1] = shortStrArr[1];
+
+        for(int i = 0; i < numInputs; i++)
+        {
+            shortStrArr = scan.nextLine().split(" ");
+            vertex_array[i] = new Node(Long.parseLong(shortStrArr[0]), Long.parseLong(shortStrArr[1]));
         }
 
-        for(int i = 0; i < strArr.length; i++) {
-            arr[i] = Integer.parseInt(strArr[i]);
-            System.out.print(arr[i] + " ");
-        }
 
         Stack stack = new Stack();
 
+
+        
         // for retrieving x value, n/2
         // for retrieving y value, n/2-1
     }
 
     /*
      */
-    public int calcPerimeter(int x_1, int x_2, int height){
+    public long calcPerimeter(long x_1, long x_2, long height){
         return ((x_2 - x_1)*2) + (height*2);
     }
 }
 
 class Node{
+    public long x;
+    public long y;
     public Node next;
-    public int height;
-    public int x;
 
-    public Node(Node _next, int _height, int _x){
-        next = _next;
-        height = _height;
-        x = _x;
+
+    public Node(long x, long y)
+    {
+        this.x = x;
+        this.y = y;
     }
-    public Node getNext() {
-        return next;
-    }
-    public void setNext(Node _next){
-        next = _next;
-    }
-    public int getHeight(){
-        return height;
-    }
-    public int getX(){
-        return x;
+
+    public void viewNode()
+    {
+        System.out.println("("+this.x + ", " + this.y+")");
+        System.out.println("");
     }
 }
 
 class LinkedList{
-    public Node first;
-    public Node current;
+    public Node first = null;
 
-    public void insert(Node node){
-        if(first == null){
-            first = node;
-            first.setNext(null);
-            current = node;
-        }
-        else if(first.getNext() == null){
-            current = node;
-            first.setNext(node);
-            current.setNext(null);
-        }
-        else{
-            current = node;
-            current.setNext(null);
+    public void insert(long x, long y)
+    {
+        Node n = new Node(x, y);
+        n.next = first;
+        first = n;
+    }
+
+    public Node delete_head()
+    {
+        Node temp = first;
+
+        first = first.next;
+
+        return temp;
+    }
+
+    public void printList()
+    {
+        Node n = first;
+        while(n != null)
+        {
+            n.viewNode();
+            n = n.next;
         }
     }
-    public boolean isEmpty(){
-        if(first == null){
-            return empty;
-        }
+
+    public boolean isEmpty()
+    {
+        return first == null;
     }
 }
 
 class Stack{
-    public Stack(){
+    LinkedList link = new LinkedList();
 
-    }
     public void pop(){
+        link.delete_head();
+    }
+    public void push(long x, long y){
+        link.insert(x, y);
 
     }
-    public void push(){
-
+    public Node peek()
+    {
+        return link.delete_head();
     }
 }
 
