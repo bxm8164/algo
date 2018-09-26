@@ -18,7 +18,7 @@ public class MaxRectanglePerimeter {
 
         scan.nextLine();
 
-        for (int i = 0; i < numInputs; i++) {
+        for (int i  = 0; i < numInputs; i++) {
             shortStrArr = scan.nextLine().split(" ");
             vertex_array[i] = new Node(Long.parseLong(shortStrArr[0]), Long.parseLong(shortStrArr[1]));
         }
@@ -32,13 +32,14 @@ public class MaxRectanglePerimeter {
             if (vertex_array[i].getY() > vertex_array[i - 1].getY() && vertex_array[i].getY() != stack.peek().getY())
                 stack.push(vertex_array[i].getX(), vertex_array[i].getY());
             else if (vertex_array[i].getY() < stack.peek().getY()) {
-                while (stack.peek().getY() < vertex_array[i].getY()) {
+                while (stack.peek().getY() <= vertex_array[i].getY()) {
                     calcPerimeter(vertex_array[i].getX(), stack.peek().getX(), stack.peek().getY());
-                    stack.pop();
                     tempX = stack.peek().getX();
+                    stack.pop();
                 }
                 stack.push(tempX, vertex_array[i].getY());
             }
+            calcPerimeter(vertex_array[i].getX(), stack.peek().getX(), stack.peek().getY());
         }
 
         System.out.println(greatestPerimeter);
