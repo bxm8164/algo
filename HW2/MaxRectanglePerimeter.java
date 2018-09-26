@@ -5,6 +5,8 @@ import java.util.Scanner;
  */
 public class MaxRectanglePerimeter {
 
+    public static long greatestPerimeter = 0, tempPerimeter = 0;
+
     public static void main(String[] args) {
 
         Scanner scan = new Scanner(System.in);
@@ -21,27 +23,34 @@ public class MaxRectanglePerimeter {
             vertex_array[i] = new Node(Long.parseLong(shortStrArr[0]), Long.parseLong(shortStrArr[1]));
         }
 
+        long tempX = 0;
         Stack stack = new Stack();
         stack.push(vertex_array[1].getX(), vertex_array[1].getY());
 
-        for (i = 2; i < vertex_array.length(); i++) {
+        for (int i = 2; i < vertex_array.length; i++) {
 
             if (vertex_array[i].getY() > vertex_array[i - 1].getY() && vertex_array[i].getY() != stack.peek().getY())
-                vertex_array[i].push(vertex_array[i].getX(), vertex_array[i].getY());
+                stack.push(vertex_array[i].getX(), vertex_array[i].getY());
             else if (vertex_array[i].getY() < stack.peek().getY()) {
-
                 while (stack.peek().getY() < vertex_array[i].getY()) {
-                    calcPerimeter();
+                    calcPerimeter(vertex_array[i].getX(), stack.peek().getX(), stack.peek().getY());
                     stack.pop();
+                    tempX = stack.peek().getX();
                 }
+                stack.push(tempX, vertex_array[i].getY());
             }
         }
+
+        System.out.println(greatestPerimeter);
     }
 
     /*
      */
-    public long calcPerimeter(long x_1, long x_2, long height) {
-        return ((x_2 - x_1) * 2) + (height * 2);
+    public static void calcPerimeter(long x_1, long x_2, long height) {
+        tempPerimeter = ((x_1 - x_2) * 2) + (height * 2);
+        if(tempPerimeter > greatestPerimeter){
+            greatestPerimeter = tempPerimeter;
+        }
     }
 }
 
