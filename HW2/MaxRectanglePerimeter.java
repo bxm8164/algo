@@ -32,10 +32,12 @@ public class MaxRectanglePerimeter {
             if (vertex_array[i].getY() > vertex_array[i - 1].getY() && vertex_array[i].getY() != stack.peek().getY())
                 stack.push(vertex_array[i].getX(), vertex_array[i].getY());
             else if (vertex_array[i].getY() < stack.peek().getY()) {
-                while (stack.peek().getY() <= vertex_array[i].getY()) {
-                    calcPerimeter(vertex_array[i].getX(), stack.peek().getX(), stack.peek().getY());
-                    tempX = stack.peek().getX();
-                    stack.pop();
+                while ( !stack.link.isEmpty()) {
+                    if(vertex_array[i].getY()<= stack.peek().getY()) {
+                        calcPerimeter(vertex_array[i].getX(), stack.peek().getX(), stack.peek().getY());
+                        tempX = stack.peek().getX();
+                        stack.pop();
+                    }
                 }
                 stack.push(tempX, vertex_array[i].getY());
             }
