@@ -38,6 +38,10 @@ public class MaxRectanglePerimeter {
                         tempX = stack.peek().getX();
                         stack.pop();
                     }
+                    else
+                    {
+                        break;
+                    }
                 }
                 stack.push(tempX, vertex_array[i].getY());
             }
