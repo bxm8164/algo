@@ -63,7 +63,7 @@ public class WeightedByDiffInversions {
     public static int countMidInv(long[] left, long[] right)
     {
         int mc = 0;
-        int i = 0, j = 0, k = 0;
+        int i = 0, j = 0, k = 0, count = 0;
 
         while(i<left.length && j<right.length)
         {
@@ -72,11 +72,16 @@ public class WeightedByDiffInversions {
             else if(left[i] > right[j])
             {
                 k = i;
-                while(k < left.length)
+                
+                if(count < 1)
                 {
-                    weighted_count += (left[k] - right[j]);
-                    k++;
+                    while(k < left.length)
+                    {
+                        weighted_count += (left[k] - right[j]);
+                        k++;
+                    }
                 }
+                count++;
                 j++;
             }
         }
