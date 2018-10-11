@@ -26,6 +26,7 @@ public class WeightedByDiffInversions {
 
     }
 
+    //split the list in two and sort each half, and call countMidInv, which calculates the weighted count.
     public static Inversions countInv(Inversions in)
     {
         if(in.inv.length == 1)
@@ -53,41 +54,41 @@ public class WeightedByDiffInversions {
 
             countInv(left);
             countInv(right);
-            midcount = countMidInv(left.inv, right.inv);
+            countMidInv(left.inv, right.inv);
 
-            in.count = left.count + right.count + midcount;
 
             return Merge(in, left.inv, right.inv);
         }
     }
-    public static int countMidInv(long[] left, long[] right)
+
+    //calculate the weighted count
+    public static void countMidInv(long[] left, long[] right)
     {
-        int mc = 0;
-        int i = 0, j = 0, k = 0, count = 0;
+        int i = 0, j = 0;
+        long left_sum = 0;
+        for(int k = 0; k < left.length; k++)
+        {
+            left_sum +=left[k];
+        }
+        //
 
         while(i<left.length && j<right.length)
         {
-            if(left[i] <= right[j])
+            if(left[i] <= right[j]) {
+                left_sum -= left[i];
                 i++;
+            }
+            //update temp when i increases
             else if(left[i] > right[j])
             {
-                k = i;
-                
-                if(count < 1)
-                {
-                    while(k < left.length)
-                    {
-                        weighted_count += (left[k] - right[j]);
-                        k++;
-                    }
-                }
-                count++;
+                weighted_count += left_sum - ((left.length - i) * right[j]);
                 j++;
+
             }
         }
-        return mc;
     }
 
+    //merge the two lists.
     public static Inversions Merge(Inversions in, long[] left, long[] right)
     {
         int i = 0;
@@ -136,6 +137,7 @@ public class WeightedByDiffInversions {
 
         return in;
     }
+
 
 
 }
