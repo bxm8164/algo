@@ -17,7 +17,7 @@ public class LongestIncreasingSubseqDP {
         for(int j = 0; j<arr.length; j++)
         {
             s[j] = 1;
-            for(int k=0; k<j; k++)
+            for(int k=0; A[k]<S[j]; k++)
             {
                 if(arr[k]<arr[j] && s[j]<s[k] + 1)
                     s[j] = s[k]+1;
