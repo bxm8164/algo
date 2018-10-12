@@ -1,9 +1,7 @@
-package HW2;
-
 import java.util.Scanner;
 
 /**
- * Created by brendanmutton on 10/9/18.
+ * Created by brendanmutton & Nicole Ganung on 10/9/18.
  */
 public class IntervalsBreaks {
     private Interval[] array;
@@ -20,6 +18,7 @@ public class IntervalsBreaks {
             String[] in = new String[2];
             in = sc.nextLine().split(" ");
             intervals[i] = new Interval(Integer.parseInt(in[0]), Integer.parseInt(in[1]));
+            intervals[i].original_position = i;
         }
 
         for(int i=0; i<n; i++)
@@ -42,19 +41,30 @@ public class IntervalsBreaks {
     {
         int max = 0;
         int[] classes = new int[intervals.length];
+        int current = 0;
 
         for(int j = 0; j<intervals.length; j++)
         {
-            for(int k = 0; k<intervals.length; k++)
+            classes[j] = 1;
+
+            for(int k = 0; k<j; k++)
             {
-                int gap = intervals[k].start - intervals[j].finish;
-                if(gap >= b[j][k])
-                    classes[j] += 1;
+
+                int gap = intervals[j].start - intervals[k].finish;
+                if(gap >= b[intervals[k].original_position][intervals[j].original_position])
+                {
+                    classes[j] = Math.max(classes[j], classes[k]+1);
+                }
+
+
             }
+
+
         }
         max = max(classes);
         return max;
     }
+
     public static int max(int[] arr)
     {
         int max = 0;
@@ -97,7 +107,7 @@ public class IntervalsBreaks {
         int k = lower;
         while(i <= mid && j <= higher)
         {
-            if(temp[i].finish <= temp[j].finish)
+            if(temp[i].start <= temp[j].start)
             {
                 array[k] = temp[i];
                 i++;
@@ -118,10 +128,12 @@ public class IntervalsBreaks {
     }
 
 }
+
 class Interval
 {
     int start = 0;
     int finish = 0;
+    int original_position = 0;
 
     public Interval(int start, int finish)
     {
