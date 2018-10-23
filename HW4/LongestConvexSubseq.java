@@ -23,7 +23,7 @@ public class LongestConvexSubseq{
         longestConvexSubseq(inputArr);
     }
 
-    public void longestConvexSubseq(long[] inputArr){
+    public static void longestConvexSubseq(long[] inputArr){
         return;
     }
 
