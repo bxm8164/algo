@@ -1,5 +1,8 @@
 import java.util.Scanner;
 
+/*
+ * Created by Nicole Ganung and Brendan Mutton
+ */
 public class LongestIncreasingSubseqCount{
 
     public static long inputArr[];
@@ -10,36 +13,37 @@ public class LongestIncreasingSubseqCount{
         int numInputs = sc.nextInt();
         sc.nextLine();
 
-        String[] inputs = new String[numInputs];
+        String[] inputs;
         inputs = sc.nextLine().split(" ");
         inputArr = new long[numInputs];
 
         for (int i = 0; i < inputs.length; i++)
             inputArr[i] = Long.parseLong(inputs[i]);
 
-        System.out.println(incrSubseq(inputArr));
-
+        incrSubseqCount(inputArr);
     }
 
-    public static long incrSubseq(long[] arr) {
+    /*
+     * Count all possible subsequences in the given array
+     */
+    public static void incrSubseqCount(long[] arr) {
         long[] s = new long[arr.length];
-
+        s[0] = 1; // Counting the empty set
         for(int j = 0; j < arr.length; j++) {
             s[j] = 1;
             for(int k=0; k<j; k++) {
                 if(arr[k] < arr[j]){
-                    System.out.println("s[j] = " + s[j] + "\ns[k] = " + s[k]);
-                    s[j] += s[k];
+                    s[j] += s[k]; // Add current number to previous if its a subseq
+                    s[j] %= 1000000;
                 }
             }
-            if(j >= arr.length) {
-                s[j + 1] = s[j];
-            }
         }
+        int total=1;
+        // Add all subsequences together
         for(int b = 0; b<s.length; b++){
-            System.out.println(s[b]);
+            total += s[b];
+            total %= 1000000;
         }
-
-        return s[arr.length-1];//%1000000
+        System.out.println(total);
     }
 }
