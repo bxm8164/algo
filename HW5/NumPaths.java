@@ -19,10 +19,10 @@ public class NumPaths {
             scan.nextLine();
         }
 
-        numPaths(points);
+        numPath(points);
     }
 
-    public static void numPaths(Vertex[] points){
+    public static void numPath(Vertex[] points){
 
     }
 }
