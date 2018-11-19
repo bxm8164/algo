@@ -1,70 +1,118 @@
+import java.util.Iterator;
 import java.util.Scanner;
-/*
- * Created by Brendan Mutton & Nicole Ganung
- */
 
-class Prerequisites{
+public class Prerequisites {
+    public static void markDepths(Vertex v, int accum, int parent) {
+        v.depth = Math.max(v.depth, accum);
+
+        for(Vertex n : v.neighbors) {
+            // This as well as the case below are probably overkill, but I don't have time to refine this
+            if(!n.seen)
+                markDepths(n, v.depth + 1, v.a);
+                // Cover the case where we encounter someone on the same chain and need to update
+            else
+                v.depth = Math.max(n.depth + 1, v.depth);
+        }
+    }
+
     public static void main(String[] args) {
         Scanner scan = new Scanner(System.in);
-        int n = scan.nextInt();
 
-        Vertex[] courses = new Vertex[n];
+        Vertex[] graph = new Vertex[scan.nextInt()];
 
-        for(int i = 1; i<n; i++){
-            Vertex v = new Vertex(i);
-            courses[i] = v;
+        for(int i = 0; i < graph.length; ++i)
+            graph[i] = new Vertex(i + 1);
+
+        for(int i = 0; i < graph.length; ++i) {
+            int r;
+            while((r = scan.nextInt()) != 0)
+                graph[i].addNeighbor(graph[r - 1]);
         }
 
-        Graph g = new Graph(courses);
+        for(int i = 0; i < graph.length; ++i) markDepths(graph[i], 1, -1);
+
+        int max = 0;
+        for(int i = 0; i < graph.length; ++i)
+            if(graph[i].depth > max) max = graph[i].depth;
+
+        System.out.println(max);
     }
 }
 
-class Sort{
-    public Sort(){
+class Vertex {
+    public int a;
+    public boolean seen;
+    public int depth;
 
-    }
-    public int dfs(Graph g){
-        return 0;
-    }
-    public void sort(){
+    public VList<Vertex> neighbors;
 
+    public Vertex(int a) {
+        neighbors = new VList<Vertex>();
+        this.a = a;
+        this.seen = false;
+        this.depth = 1;
+    }
+
+    public boolean equals(Object other) {
+        return (other instanceof Vertex) && ((Vertex)other).a == this.a;
+    }
+
+    public void addNeighbor(Vertex v) {
+        neighbors.add(v);
+    }
+
+    public String toString() {
+        String r = a + ": ";
+        for(Vertex v : neighbors) r = r + v.a + " ";
+        return r;
     }
 }
 
-class Graph{
-    public Vertex courses[];
+class VList<T> implements Iterable<T> {
+    VNode<T> head;
+    int size;
 
-    public Graph(Vertex[] courses){
-        this.courses = courses;
-        Scanner scan = new Scanner(System.in);
-        for(int i = 0; i < courses.length; i++){
-            String pre = scan.nextLine();
-            String[] preReqs = pre.split(" ");
-            courses[i].addEdges(preReqs);
+    public void add(T item) {
+        if(head == null) head = new VNode<T>(item);
+
+        else {
+            VNode<T> curr = head;
+            while(curr.next != null) {
+                curr = curr.next;
+            }
+            curr.next = new VNode<T>(item);
+            ++size;
+        }
+    }
+
+    public Iterator<T> iterator() {
+        return new VIterator();
+    }
+
+    private class VIterator implements Iterator<T> {
+        VNode<T> curr = head;
+
+        public boolean hasNext() {
+            return curr != null;
+        }
+
+        public T next() {
+            T val = curr.value;
+            curr = curr.next;
+            return val;
+        }
+
+        public void remove() {
+            throw new UnsupportedOperationException();
         }
     }
 }
 
-class Edge{
-    public int course,prereq;
+class VNode<T> {
+    public T value;
+    public VNode<T> next;
 
-    public Edge(int course, int prereq){
-        this.course = course;
-        this.prereq = prereq;
+    public VNode(T value) {
+        this.value = value;
     }
 }
-
-class Vertex{
-    public int courseNumber;
-    public Edge[] edges;
-    public int counter = 0;
-
-    public Vertex(int courseNumber){
-        this.courseNumber = courseNumber;
-    }
-
-    public void addEdges(String[] arr){
-        //add edges
-    }
-}
-

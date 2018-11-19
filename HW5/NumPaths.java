@@ -1,38 +1,29 @@
 import java.util.Scanner;
-/*
- * Created by Brendan Mutton & Nicole Ganung
- */
 
 public class NumPaths {
-    public static void main(String[] args) {
-        Scanner scan = new Scanner(System.in);
-        int numVerticies = scan.nextInt(); // n
-        int numEdges = scan.nextInt(); // m
+    public static void main(String[] args) throws Exception{
+        Scanner sc = new Scanner(System.in);
 
-        Vertex[] points = new Vertex[numVerticies];
+        String[] n_m = sc.nextLine().split(" ");
+        int n = Integer.parseInt(n_m[0]);
+        int m = Integer.parseInt(n_m[1]);
+        String[] s_t = sc.nextLine().split(" ");
+        int s = Integer.parseInt(s_t[0]);
+        int t = Integer.parseInt(s_t[1]);
 
-        int x,y;
-        for (int i = 0; i < numVerticies; i++) {
-            x = scan.nextInt();
-            y = scan.nextInt();
-            points[i] = new Vertex(x, y);
-            scan.nextLine();
+        Graph g = new Graph(n+1);
+        for(int i = 0; i<m; i++)
+        {
+            String[] e = sc.nextLine().split(" ");
+            g.addEdge(Integer.parseInt(e[0]), Integer.parseInt(e[1]));
+            g.addEdge(Integer.parseInt(e[1]), Integer.parseInt(e[0]));
         }
 
-        numPath(points);
-    }
+        g.bfs(g, s);
 
-    public static void numPath(Vertex[] points){
+        System.out.println(g.numPaths[t]);
 
-    }
-}
-
-class Vertex {
-    int x = 0;
-    int y = 0;
-
-    public Vertex(int x, int y) {
-        this.x = x;
-        this.y = y;
     }
 }
+
+
