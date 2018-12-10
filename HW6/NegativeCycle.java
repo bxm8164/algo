@@ -27,6 +27,7 @@ public class NegativeCycle
         }
 
         g.dijkstra(s);
+        System.out.println("NO");
 
     }
 }
@@ -56,12 +57,12 @@ class Graph{
         }
     }
 
-    public void bfs(Graph G, int s) throws Exception{
+    public void bfs(Graph G, Node s) throws Exception{
         marked = new boolean[V];
         edgeTo = new int[V];
         distTo = new int[V];
         numPaths = new int[V];
-        Queue<Integer> q = new Queue<Integer>();
+        Queue q = new Queue();
         for(int i = 0; i<G.V; i++)
             marked[i] = false;
         for (int v = 0; v < G.V; v++)
@@ -69,29 +70,29 @@ class Graph{
         for(int i = 0; i<G.V; i++)
             numPaths[i] = 0;
 
-        distTo[s] = 0;
-        numPaths[s] = 1;
-        marked[s] = true;
-        q.enqueue(s);
+        distTo[s.vertex] = 0;
+        numPaths[s.vertex] = 1;
+        marked[s.vertex] = true;
+        q.enqueue(s.vertex, s.cost);
 
         while (!q.isEmpty()) {
-            int v = q.dequeue();
+            Node v = q.dequeue();
 
-            for(int i = s; i<=adj[v].size(); i++)
+            for(int i = s.vertex; i<=adj[v.vertex].size(); i++)
             {
-                int w = adj[v].get(i-1);
-                if (!marked[w]) {
-                    marked[w] = true;
-                    q.enqueue(w);
+                Node w = adj[v.vertex].get(i-1);
+                if (!marked[w.vertex]) {
+                    marked[w.vertex] = true;
+                    q.enqueue(w.vertex, w.cost);
                 }
-                if(distTo[w] > distTo[v]+1)
+                if(distTo[w.vertex] > distTo[v.vertex]+1)
                 {
-                    edgeTo[w] = v;
-                    distTo[w] = distTo[v] + 1;
-                    numPaths[w] = numPaths[v];
+                    edgeTo[w.vertex] = v.vertex;
+                    distTo[w.vertex] = distTo[v.vertex] + 1;
+                    numPaths[w.vertex] = numPaths[v.vertex];
                 }
-                else if(distTo[w] == distTo[v]+1)
-                    numPaths[w] += numPaths[v];
+                else if(distTo[w.vertex] == distTo[v.vertex]+1)
+                    numPaths[w.vertex] += numPaths[v.vertex];
             }
 
         }
@@ -256,28 +257,11 @@ class Node {
         return this.next;
     }
 }
+class Queue {
 
-public class Queue<T> {
+    public Node first, last;
 
-
-    private class Node{
-        T item;
-        Node next;
-
-        Node(T t){
-            item = t;
-            next = null;
-        }
-
-        public String toString()  {
-            return  item.toString();
-        }
-    }
-
-
-    private Node first, last;
-
-    Queue(){
+    public Queue(){
         first = null;
         last = null;
     }
@@ -287,24 +271,23 @@ public class Queue<T> {
         return first == null;
     }
 
-    public void enqueue(T t){
+    public void enqueue(int t, int tt){
         Node oldLast = last;
-        last = new Node(t);
+        last = new Node(t, tt);
         if (isEmpty()) first = last;
         else   oldLast.next = last;
     }
 
-    public T dequeue(){
+    public Node dequeue(){
         if (isEmpty())
             return  null;
 
         if (first == last){
-            T t = (T) first.item;
             first = last = null;
-            return  t;
+            return first;
         }
 
-        T t = (T) first.item;
+        Node t = first;
         first = first.next;
         return t;
     }
