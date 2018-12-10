@@ -124,9 +124,10 @@ class Graph{
         {
             System.out.println("YES");
             System.exit(0);
+            //Return yes
         }
         int x =0;
-
+        //return no
     }
 
     public int extract_min(int s)
