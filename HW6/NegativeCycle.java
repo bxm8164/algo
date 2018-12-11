@@ -2,12 +2,12 @@
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
-//Created by Nicole Ganung and Brendan Mutton
+/*
+ * Created by Nicole Ganung and Brendan Mutton
+ */
 
-public class NegativeCycle
-{
-    public static void main(String[] args) throws  Exception
-    {
+public class NegativeCycle {
+    public static void main(String[] args) throws  Exception {
 
         Scanner sc = new Scanner(System.in);
 
@@ -28,11 +28,10 @@ public class NegativeCycle
 
         g.dijkstra(s);
         System.out.println("NO");
-
     }
 }
 
-class Graph{
+class Graph {
 
     public int V;
     public int E;
@@ -57,7 +56,7 @@ class Graph{
         }
     }
 
-    public void bfs(Graph G, Node s) throws Exception{
+    public void bfs(Graph G, Node s) throws Exception {
         marked = new boolean[V];
         edgeTo = new int[V];
         distTo = new int[V];
@@ -94,34 +93,25 @@ class Graph{
                 else if(distTo[w.vertex] == distTo[v.vertex]+1)
                     numPaths[w.vertex] += numPaths[v.vertex];
             }
-
         }
-
     }
 
-
-    public void dijkstra(int s) throws Exception
-    {
-
-        for(int i = 1; i < V; i++)
-        {
+    public void dijkstra(int s) throws Exception {
+        for(int i = 1; i < V; i++) {
             distTo[i] = Integer.MAX_VALUE;
             finalized[i] = false;
         }
 
         distTo[s] = 0;
-
         update(s, s);
 
-        for(int i = 1; i < V; i++)
-        {
+        for(int i = 1; i < V; i++) {
             int u = extract_min(s);
             finalized[u] = true;
             update(u, s);
         }
 
-        if(distTo[s] < 0)
-        {
+        if(distTo[s] < 0) {
             System.out.println("YES");
             System.exit(0);
             //Return yes
@@ -130,42 +120,30 @@ class Graph{
         //return no
     }
 
-    public int extract_min(int s)
-    {
+    public int extract_min(int s) {
         int min = Integer.MAX_VALUE;
         int min_vertex = 0;
 
-        for(int i = 1; i < distTo.length; i++)
-        {
-            if(distTo[i] < min && !finalized[i] && i!=s)
-            {
+        for(int i = 1; i < distTo.length; i++) {
+            if(distTo[i] < min && !finalized[i] && i!=s) {
                 min = distTo[i];
                 min_vertex = i;
             }
         }
-
         return min_vertex;
     }
 
-
-    public void update(int u, int s) throws Exception
-    {
+    public void update(int u, int s) throws Exception {
         LinkedList a = adj[u];
 
-        for(int i = 1; i <= a.size(); i++)
-        {
+        for(int i = 1; i <= a.size(); i++) {
             Node v = adj[u].get(i-1);
-            if(distTo[v.vertex] > distTo[u] + v.cost && !finalized[v.vertex])
-            {
+            if(distTo[v.vertex] > distTo[u] + v.cost && !finalized[v.vertex]) {
                 distTo[v.vertex] = distTo[u] + v.cost;
             }
-
         }
     }
-
 }
-
-
 
 class LinkedList {
 
@@ -186,7 +164,7 @@ class LinkedList {
         Node node = data;
         if (this.first == null) {
             this.first = this.last = node;
-        }else{
+        } else{
             this.last.setNext(node);
             this.last = node;
         }
@@ -194,27 +172,21 @@ class LinkedList {
     }
 
     @SuppressWarnings("unchecked")
-    public Node get(int index) throws Exception
-    {
+    public Node get(int index) throws Exception {
         Node current = first;
         int count = 0; /* index of Node we are
                           currently looking at */
-        while (current != null)
-        {
-
+        while (current != null) {
             if (count == index)
                 return current;
             count++;
             current = current.next;
         }
-
         /* if we get to this line, the caller was asking
         for a non-existent element so we assert fail */
         assert(false);
         return null;
     }
-
-
 
     public boolean contains(int data) {
         Node current = this.first;
@@ -226,10 +198,9 @@ class LinkedList {
             current = current.getNext();
         }
         return false;
-
     }
-
 }
+
 class Node {
 
     public int vertex;
@@ -267,7 +238,6 @@ class Queue {
         last = null;
     }
 
-
     public boolean isEmpty(){
         return first == null;
     }
@@ -287,7 +257,6 @@ class Queue {
             first = last = null;
             return first;
         }
-
         Node t = first;
         first = first.next;
         return t;

@@ -1,4 +1,8 @@
 import java.util.Scanner;
+/*
+ * Created by Nicole Ganung and Brendan Mutton
+ */
+
 public class NetworkConnect{
     public static int numComputers, numConnections, source, sink;
     public static int[] array;
