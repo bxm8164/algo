@@ -1,11 +1,15 @@
 import java.util.Scanner;
 public class NetworkConnect{
     public static int numComputers, numConnections, source, sink;
+    public static int[] array;
+    public static int len;
+    public static int[] temp;
+    public static int[] path;
     public static void main(String [] args){
         Scanner scan = new Scanner(System.in);
         String line = scan.nextLine();
         String[] a = line.split(" ");
-        numComputers = Integer.parseInt(a[0]);
+        numComputers = Integer.parseInt(a[0])+1;
         numConnections = Integer.parseInt(a[1]);
 
         String line1 = scan.nextLine();
@@ -13,201 +17,168 @@ public class NetworkConnect{
         source = Integer.parseInt(b[0]);
         sink = Integer.parseInt(b[1]);
 
-        Graph graph = new Graph(numComputers, numConnections);
+        int graph[][] = new int[numComputers][numConnections];
         int s = source;
         int t = sink;
 
         for(int i=0; i<numComputers; i++){
-            line = scan.nextLine().split(" ");
-            int u = Integer.parseInt(input[0]), v = Integer.parseInt(input[1]), w = Integer.parseInt(input[2]);
-            if(w < 0){
-                s=v;
-            }
-            g.adj[u].add(new Node(v,w));
+            b = scan.nextLine().split(" ");
+            int u = Integer.parseInt(b[0]), v = Integer.parseInt(b[1]), w = Integer.parseInt(b[2]);
+            graph[u][v] = w;
         }
-        //g.maxFlow(s, t);
-    }
-}
 
-class Graph{
+        edmondsKarp(graph, s, t);
 
-    public int V;
-    public int E;
-    public LinkedList adj[];
-    public boolean[] finalized;
-    public int[] distTo;
-    public boolean[] marked;
-    public int[] edgeTo;
-    public int[] numPaths;
-
-    /**
-     *  We initialize the Graph with number of vertices v in the graph
-     */
-
-    public Graph(int v, int e) {
-        this.V = v;
-        this.E = e;
-        adj = new LinkedList[v];
-        finalized = new boolean[v];
-        distTo = new int[v];
-        for (int i = 0; i < v; i++) {
-            adj[i] = new LinkedList();
-        }
     }
 
-    public void bfs(Graph G, Node s) throws Exception{
-        marked = new boolean[V];
-        edgeTo = new int[V];
-        distTo = new int[V];
-        numPaths = new int[V];
-        Queue q = new Queue();
-        for(int i = 0; i<G.V; i++)
-            marked[i] = false;
-        for (int v = 0; v < G.V; v++)
-            distTo[v] = Integer.MAX_VALUE;
-        for(int i = 0; i<G.V; i++)
-            numPaths[i] = 0;
+    public static boolean bfs(int rGraph[][], int s, int t, int parent[])
+    {
+        boolean visited[] = new boolean[numComputers];
+        for(int i=0; i<numComputers; ++i)
+            visited[i]=false;
 
-        distTo[s.vertex] = 0;
-        numPaths[s.vertex] = 1;
-        marked[s.vertex] = true;
-        q.enqueue(s.vertex, s.cost);
+        Queue<Integer> queue = new Queue<Integer>();
+        queue.enqueue(s);
+        visited[s] = true;
+        parent[s]=-1;
 
-        while (!q.isEmpty()) {
-            Node v = q.dequeue();
+        while (!queue.isEmpty())
+        {
+            int u = queue.dequeue();
 
-            for(int i = s.vertex; i<=adj[v.vertex].size(); i++)
+            for (int v=0; v<numComputers; v++)
             {
-                Node w = adj[v.vertex].get(i-1);
-                if (!marked[w.vertex]) {
-                    marked[w.vertex] = true;
-                    q.enqueue(w.vertex, w.cost);
-                }
-                if(distTo[w.vertex] > distTo[v.vertex]+1)
+                if (!visited[v] && rGraph[u][v] > 0)
                 {
-                    edgeTo[w.vertex] = v.vertex;
-                    distTo[w.vertex] = distTo[v.vertex] + 1;
-                    numPaths[w.vertex] = numPaths[v.vertex];
+                    queue.enqueue(v);
+                    parent[v] = u;
+                    visited[v] = true;
+
                 }
-                else if(distTo[w.vertex] == distTo[v.vertex]+1)
-                    numPaths[w.vertex] += numPaths[v.vertex];
             }
-
         }
 
+        return (visited[t]);
     }
 
-    public void update(int u, int s) throws Exception
+    public static void edmondsKarp(int graph[][], int s, int t)
     {
-        LinkedList a = adj[u];
+        int u, v;
 
-        for(int i = 1; i <= a.size(); i++)
+        int rGraph[][] = new int[numComputers][numConnections];
+
+        for (u = 0; u < numComputers; u++)
+            for (v = 0; v < numComputers; v++)
+                rGraph[u][v] = graph[u][v];
+
+        int parent[] = new int[numComputers];
+
+        while (bfs(rGraph, s, t, parent))
         {
-            Node v = adj[u].get(i-1);
-            if(distTo[v.vertex] > distTo[u] + v.cost && !finalized[v.vertex])
+            int path_flow = Integer.MAX_VALUE;
+            for (v=t; v!=s; v=parent[v])
             {
-                distTo[v.vertex] = distTo[u] + v.cost;
+                u = parent[v];
+                path_flow = Math.min(path_flow, rGraph[u][v]);
+            }
+            for (v=t; v != s; v=parent[v])
+            {
+                u = parent[v];
+                rGraph[u][v] -= path_flow;
+                rGraph[v][u] += path_flow;
             }
 
         }
-    }
 
-}
+        bfs(rGraph, s, t, parent);
 
-class LinkedList {
+        sort(parent);
 
-    private Node first;
-    private Node last;
-    private int size;
-
-    public LinkedList() {
-        this.first = this.last = null;
-        this.size = 0;
-    }
-
-    public int size() {
-        return this.size;
-    }
-
-    public void add(Node data) {
-        Node node = data;
-        if (this.first == null) {
-            this.first = this.last = node;
-        }else{
-            this.last.setNext(node);
-            this.last = node;
-        }
-        this.size++;
-    }
-
-    public Node get(int index) throws Exception
-    {
-        Node current = first;
-        int count = 0; /* index of Node we are
-                          currently looking at */
-        while (current != null)
+        for(int i = 1; i < parent.length; i++)
         {
-
-            if (count == index)
-                return current;
-            count++;
-            current = current.next;
-        }
-
-        /* if we get to this line, the caller was asking
-        for a non-existent element so we assert fail */
-        assert(false);
-        return null;
-    }
-
-    public boolean contains(int data) {
-        Node current = this.first;
-
-        while (current != null) {
-            if (current.getCost() == data) {
-                return true;
+            if(rGraph[source][i] == 0 && i != source)
+            {
+                System.out.println(source +" "+ i);
+                System.exit(0);
             }
-            current = current.getNext();
         }
-        return false;
+        System.out.println("NO");
 
+    }
+    public static void sort(int arr[])
+    {
+        array = arr;
+        len = arr.length;
+        temp = new int[len];
+        mergeSort(0, len-1);
+
+    }
+
+    private static void mergeSort(int lower, int higher)
+    {
+        if(lower < higher)
+        {
+            int mid = lower + (higher - lower) / 2;
+            mergeSort(lower, mid);
+            mergeSort(mid + 1, higher);
+            merge(lower, mid, higher);
+        }
+    }
+
+    public static void merge(int lower, int mid, int higher)
+    {
+        for(int i = lower; i <= higher; i++)
+        {
+            temp[i] = array[i];
+        }
+        int i = lower;
+        int j = mid + 1;
+        int k = lower;
+        while(i <= mid && j <= higher)
+        {
+            if(temp[i] <= temp[j])
+            {
+                array[k] = temp[i];
+                i++;
+            }
+            else
+            {
+                array[k] = temp[j];
+                j++;
+            }
+            k++;
+        }
+        while(i <= mid)
+        {
+            array[k] = temp[i];
+            k++;
+            i++;
+        }
     }
 
 }
 
-class Node {
+class Queue<T> {
 
-    public int vertex;
-    public int cost;
-    public Node next;
 
-    public Node(int vertex, int cost) {
-        this.cost = cost;
-        this.vertex = vertex;
-        this.next = null;
+    private class Node{
+        T item;
+        Node next;
+
+        Node(T t){
+            item = t;
+            next = null;
+        }
+
+        public String toString()  {
+            return  item.toString();
+        }
     }
 
-    public void setCost(int cost) {
-        this.cost = cost;
-    }
 
-    public int getCost() {
-        return this.cost;
-    }
+    private Node first, last;
 
-    public void setNext(Node next) {
-        this.next = next;
-    }
-
-    public Node getNext() {
-        return this.next;
-    }
-}
-class Queue {
-
-    public Node first, last;
-
-    public Queue(){
+    Queue(){
         first = null;
         last = null;
     }
@@ -217,24 +188,43 @@ class Queue {
         return first == null;
     }
 
-    public void enqueue(int t, int tt){
+    public void enqueue(T t){
         Node oldLast = last;
-        last = new Node(t, tt);
+        last = new Node(t);
         if (isEmpty()) first = last;
         else   oldLast.next = last;
     }
 
-    public Node dequeue(){
+    public T dequeue(){
         if (isEmpty())
             return  null;
 
         if (first == last){
+            T t = (T) first.item;
             first = last = null;
-            return first;
+            return  t;
         }
 
-        Node t = first;
+        T t = (T) first.item;
         first = first.next;
         return t;
     }
+/*
+    public String toString(){
+        if (first == null)
+            return null;
+
+        if (first == last)
+            return first.item.toString();
+
+        StringBuffer sb = new StringBuffer();
+        Node cur = first;
+        while(cur != last){
+            sb.append(cur.item.toString()+" ");
+            cur = cur.next;
+        }
+        sb.append(last.item.toString());
+        return sb.toString();
+    }
+*/
 }
